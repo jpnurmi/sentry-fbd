@@ -1,0 +1,27 @@
+name: sentry_fbd
+description: Sentry FBD
+publish_to: 'none'
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  code_text_field: ^1.1.0
+  collection: ^1.19.1
+  file: ^7.0.1
+  flutter:
+    sdk: flutter
+  flutter_highlight: ^0.7.0
+  highlight: ^0.7.0
+  path: ^1.9.1
+  platform: ^3.1.6
+  provider: ^6.1.5
+  sentry: ^9.1.0
+
+dev_dependencies:
+  flutter_lints: ^5.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
