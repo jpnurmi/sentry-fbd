@@ -43,8 +43,11 @@ class FeedbackViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> init() async {
-    // TODO: Sentry.init()
+  Future<void> init() {
+    return Sentry.init((options) {
+      options.dsn = dsn;
+      options.debug = true;
+    });
   }
 
   Future<void> submit() {

@@ -19,6 +19,12 @@ class FeedbackView extends StatefulWidget {
 
 class _FeedbackViewState extends State<FeedbackView> {
   @override
+  void initState() {
+    super.initState();
+    context.read<FeedbackViewModel>().init();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<FeedbackViewModel>();
     return Scaffold(
