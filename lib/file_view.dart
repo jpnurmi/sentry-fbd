@@ -67,6 +67,7 @@ class _FileViewState extends State<FileView> {
           child: CodeField(
             controller: _controller,
             readOnly: true,
+            wrap: true,
           ),
         ),
       ),
