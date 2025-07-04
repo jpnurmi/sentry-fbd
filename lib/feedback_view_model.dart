@@ -1,62 +1,46 @@
-import 'package:flutter/foundation.dart';
-import 'package:platform/platform.dart';
+import 'package:flutter/widgets.dart';
 import 'package:sentry/sentry.dart';
 
+import 'envelope_model.dart';
+
 class FeedbackViewModel with ChangeNotifier {
-  FeedbackViewModel([Platform platform = const LocalPlatform()])
-    : _platform = platform;
+  Envelope? _envelope;
+  String? get dsn => _envelope?.header['dsn'];
+  String? get eventId => _envelope?.header['event_id'];
 
-  final Platform _platform;
+  final _name = TextEditingController();
+  final _email = TextEditingController();
+  final _feedback = TextEditingController();
 
-  late final String? _dsn = _platform.environment['SENTRY_DSN'];
-  late final String? _eventId = _platform.environment['SENTRY_EVENT_ID'];
-
-  late String _name = _platform.environment['SENTRY_USER'] ?? '';
-  late String _email = _platform.environment['SENTRY_EMAIL'] ?? '';
-  late String _feedback = '';
-
-  String? get dsn => _dsn;
-  String? get eventId => _eventId;
-
-  String get name => _name;
-  String get email => _email;
-  String get feedback => _feedback;
+  TextEditingController get name => _name;
+  TextEditingController get email => _email;
+  TextEditingController get feedback => _feedback;
 
   bool get isValid =>
-      _dsn != null && _eventId != null && _feedback.trim().isNotEmpty;
+      dsn != null && eventId != null && _feedback.text.trim().isNotEmpty;
 
-  void setName(String name) {
-    if (name == _name) return;
-    _name = name;
+  Future<void> init(Envelope? envelope) async {
+    final event = envelope?.getEvent();
+    _name.text = event?['user']?['username'] ?? '';
+    _email.text = event?['user']?['email'] ?? '';
+    _envelope = envelope;
     notifyListeners();
-  }
 
-  void setEmail(String email) {
-    if (email == _email) return;
-    _email = email;
-    notifyListeners();
-  }
-
-  void setFeedback(String feedback) {
-    if (feedback == _feedback) return;
-    _feedback = feedback;
-    notifyListeners();
-  }
-
-  Future<void> init() {
-    return Sentry.init((options) {
-      options.dsn = dsn;
-      options.debug = true;
-    });
+    if (dsn != null) {
+      await Sentry.init((options) {
+        options.dsn = dsn;
+        options.debug = true;
+      });
+    }
   }
 
   Future<void> submit() {
     return Sentry.captureFeedback(
       SentryFeedback(
-        message: _feedback,
-        name: _name,
-        contactEmail: _email,
-        associatedEventId: SentryId.fromId(_eventId!),
+        message: _feedback.text.trim(),
+        name: _name.text.trim(),
+        contactEmail: _email.text.trim(),
+        associatedEventId: SentryId.fromId(eventId!),
       ),
     );
   }

@@ -3,8 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:platform/platform.dart';
 
 class EnvironmentViewModel with ChangeNotifier {
-  EnvironmentViewModel([Platform platform = const LocalPlatform()])
-    : _platform = platform {
+  EnvironmentViewModel({
+    @visibleForTesting Platform platform = const LocalPlatform(),
+  }) : _platform = platform {
     filter('SENTRY');
   }
 

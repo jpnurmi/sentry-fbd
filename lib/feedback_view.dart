@@ -13,12 +13,6 @@ class FeedbackView extends StatefulWidget {
 
 class _FeedbackViewState extends State<FeedbackView> {
   @override
-  void initState() {
-    super.initState();
-    context.read<FeedbackViewModel>().init();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<FeedbackViewModel>();
     return Scaffold(
@@ -43,19 +37,16 @@ class _FeedbackViewState extends State<FeedbackView> {
         padding: const EdgeInsets.all(16),
         children: [
           TextFormField(
-            initialValue: viewModel.name,
+            controller: viewModel.name,
             decoration: InputDecoration(label: Text('Name')),
-            onChanged: viewModel.setName,
           ),
           TextFormField(
-            initialValue: viewModel.email,
+            controller: viewModel.email,
             decoration: InputDecoration(label: Text('Email')),
-            onChanged: viewModel.setEmail,
           ),
           TextFormField(
-            initialValue: viewModel.feedback,
+            controller: viewModel.feedback,
             decoration: InputDecoration(label: Text('Feedback')),
-            onChanged: viewModel.setFeedback,
             maxLines: 5,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: (value) =>

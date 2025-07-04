@@ -6,8 +6,9 @@ import 'package:path/path.dart' as path;
 import 'envelope_model.dart';
 
 class EnvelopeViewModel with ChangeNotifier {
-  EnvelopeViewModel({@visibleForTesting fileSystem = const LocalFileSystem()})
-    : _fileSystem = fileSystem;
+  EnvelopeViewModel({
+    @visibleForTesting fileSystem = const LocalFileSystem(),
+  }) : _fileSystem = fileSystem;
 
   final FileSystem _fileSystem;
   String? _filePath;
@@ -19,8 +20,6 @@ class EnvelopeViewModel with ChangeNotifier {
 
   Future<void> load(String? filePath) async {
     _filePath = filePath;
-    notifyListeners();
-
     if (filePath != null) {
       final bytes = await _fileSystem.file(filePath).readAsBytes();
       _envelope = Envelope.parse(bytes);

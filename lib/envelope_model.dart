@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:collection/collection.dart';
+
 const kNewline = 10; // '\n'
 const kOpenBrace = 123; // '{'
 
@@ -9,6 +11,12 @@ class Envelope {
 
   final Map<String, dynamic> header;
   final List<Map<String, dynamic>> items;
+
+  Map<String, dynamic>? getEvent() {
+    return items.firstWhereOrNull(
+      (item) => item['type'] == 'event',
+    )?['payload'];
+  }
 
   @override
   String toString() {
@@ -85,7 +93,7 @@ class Envelope {
       return null;
     }
     try {
-      return jsonDecode(utf8.decode(bytes));
+      return json.decode(utf8.decode(bytes));
     } catch (e) {
       try {
         return utf8.decode(bytes);

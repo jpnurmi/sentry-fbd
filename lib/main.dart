@@ -14,8 +14,13 @@ void main(List<String> args) {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => EnvironmentViewModel()),
-        ChangeNotifierProvider(create: (_) => EnvelopeViewModel()),
-        ChangeNotifierProvider(create: (_) => FeedbackViewModel()),
+        ChangeNotifierProvider(
+          create: (_) => EnvelopeViewModel()..load(args.singleOrNull),
+        ),
+        ChangeNotifierProxyProvider<EnvelopeViewModel, FeedbackViewModel>(
+          create: (_) => FeedbackViewModel(),
+          update: (_, e, f) => (f ?? FeedbackViewModel())..init(e.envelope),
+        ),
       ],
       child: MaterialApp(
         title: 'Sentry FBD',
