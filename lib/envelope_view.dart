@@ -10,7 +10,7 @@ import 'envelope_view_model.dart';
 class EnvelopeView extends StatefulWidget {
   const EnvelopeView(this.path, {super.key});
 
-  final String path;
+  final String? path;
 
   @override
   State<EnvelopeView> createState() => _EnvelopeViewState();
@@ -37,6 +37,7 @@ class _EnvelopeViewState extends State<EnvelopeView> {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<EnvelopeViewModel>();
+    final styles = CodeStyles.of(context);
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -52,11 +53,10 @@ class _EnvelopeViewState extends State<EnvelopeView> {
           ],
         ),
       ),
+      backgroundColor: styles['root']?.backgroundColor,
       body: SingleChildScrollView(
         child: CodeTheme(
-          data: CodeThemeData(
-            styles: CodeStyles.of(context),
-          ),
+          data: CodeThemeData(styles: styles),
           child: CodeField(
             controller: _controller,
             readOnly: true,

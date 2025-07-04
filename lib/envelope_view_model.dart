@@ -17,12 +17,16 @@ class EnvelopeViewModel with ChangeNotifier {
   String get dirname => path.dirname(_filePath ?? '');
   Envelope? get envelope => _envelope;
 
-  Future<void> load(String filePath) async {
+  Future<void> load(String? filePath) async {
     _filePath = filePath;
     notifyListeners();
 
-    final bytes = await _fileSystem.file(filePath).readAsBytes();
-    _envelope = Envelope.parse(bytes);
+    if (filePath != null) {
+      final bytes = await _fileSystem.file(filePath).readAsBytes();
+      _envelope = Envelope.parse(bytes);
+    } else {
+      _envelope = null;
+    }
     notifyListeners();
   }
 }

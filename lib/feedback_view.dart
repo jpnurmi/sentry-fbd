@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'feedback_view_model.dart';
+import 'routes.dart';
 
 class FeedbackView extends StatefulWidget {
   const FeedbackView({super.key});
@@ -23,17 +24,20 @@ class _FeedbackViewState extends State<FeedbackView> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Feedback (${viewModel.eventId ?? '\$SENTRY_EVENT_ID'})'),
-            Text(
-              viewModel.dsn ?? '\$SENTRY_DSN',
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ],
-        ),
+        title: Text('Sentry FBD'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.list),
+            tooltip: 'Environment',
+            onPressed: () => Navigator.pushNamed(context, Routes.environment),
+          ),
+          IconButton(
+            icon: const Icon(Icons.mail),
+            tooltip: 'Envelope',
+            onPressed: () => Navigator.pushNamed(context, Routes.envelope),
+          ),
+        ],
+        actionsPadding: const EdgeInsets.symmetric(horizontal: 16),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),

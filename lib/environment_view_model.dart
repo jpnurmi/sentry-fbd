@@ -10,12 +10,16 @@ class EnvironmentViewModel with ChangeNotifier {
 
   final Platform _platform;
   List<String> _keys = [];
+  String _filter = '';
 
   int get length => _keys.length;
   String key(int index) => _keys[index];
   String? value(int index) => _platform.environment[_keys[index]];
 
+  String init() => _filter;
+
   void filter(String filter) {
+    _filter = filter;
     _keys = _platform.environment.keys
         .where(
           (key) =>
