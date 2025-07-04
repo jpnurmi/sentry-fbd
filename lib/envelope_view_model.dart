@@ -6,21 +6,23 @@ import 'package:path/path.dart' as path;
 import 'envelope_model.dart';
 
 class EnvelopeViewModel with ChangeNotifier {
-  EnvelopeViewModel(
-    this.filePath, {
-    @visibleForTesting fileSystem = const LocalFileSystem(),
-  }) : _fileSystem = fileSystem;
+  EnvelopeViewModel({@visibleForTesting fileSystem = const LocalFileSystem()})
+    : _fileSystem = fileSystem;
 
-  final String filePath;
   final FileSystem _fileSystem;
+  String? _filePath;
   Envelope? _envelope;
 
-  String get basename => path.basename(filePath);
-  String get dirname => path.dirname(filePath);
+  String get basename => path.basename(_filePath ?? '');
+  String get dirname => path.dirname(_filePath ?? '');
   Envelope? get envelope => _envelope;
 
-  Future<void> init() async {
+  Future<void> load(String filePath) async {
+    _filePath = filePath;
+    notifyListeners();
+
     final bytes = await _fileSystem.file(filePath).readAsBytes();
     _envelope = Envelope.parse(bytes);
+    notifyListeners();
   }
 }

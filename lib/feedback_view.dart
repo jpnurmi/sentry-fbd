@@ -6,13 +6,6 @@ import 'feedback_view_model.dart';
 class FeedbackView extends StatefulWidget {
   const FeedbackView({super.key});
 
-  static Widget create() {
-    return ChangeNotifierProvider(
-      create: (_) => FeedbackViewModel(),
-      child: const FeedbackView(),
-    );
-  }
-
   @override
   State<FeedbackView> createState() => _FeedbackViewState();
 }

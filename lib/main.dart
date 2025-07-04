@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sentry_fbd/argument_view_model.dart';
+import 'package:sentry_fbd/envelope_view_model.dart';
+import 'package:sentry_fbd/environment_view_model.dart';
+import 'package:sentry_fbd/feedback_view_model.dart';
 
 import 'argument_view.dart';
 import 'environment_view.dart';
@@ -8,24 +13,30 @@ import 'routes.dart';
 
 void main(List<String> args) {
   runApp(
-    MaterialApp(
-      title: 'Sentry FBD',
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
-      home: HomePage(args: args),
-      routes: {
-        Routes.envelope: (context) =>
-            EnvelopeView.create(Arguments.of(context).single),
-        Routes.feedback: (context) => FeedbackView.create(),
-      },
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ArgumentViewModel(args)),
+        ChangeNotifierProvider(create: (_) => EnvironmentViewModel()),
+        ChangeNotifierProvider(create: (_) => EnvelopeViewModel()),
+        ChangeNotifierProvider(create: (_) => FeedbackViewModel()),
+      ],
+      child: MaterialApp(
+        title: 'Sentry FBD',
+        theme: ThemeData.light(),
+        darkTheme: ThemeData.dark(),
+        home: HomePage(),
+        routes: {
+          Routes.envelope: (context) =>
+              EnvelopeView(Arguments.of(context).single),
+          Routes.feedback: (context) => FeedbackView(),
+        },
+      ),
     ),
   );
 }
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key, required this.args});
-
-  final List<String> args;
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +48,8 @@ class HomePage extends StatelessWidget {
             centerTitle: false,
             pinned: true,
           ),
-          ArgumentView.create(args),
-          EnvironmentView.create(),
+          ArgumentView(),
+          EnvironmentView(),
         ],
       ),
       floatingActionButton: FloatingActionButton(

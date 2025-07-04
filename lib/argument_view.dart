@@ -7,13 +7,6 @@ import 'routes.dart';
 class ArgumentView extends StatefulWidget {
   const ArgumentView({super.key});
 
-  static Widget create(List<String> args) {
-    return ChangeNotifierProvider(
-      create: (_) => ArgumentViewModel(args),
-      child: const ArgumentView(),
-    );
-  }
-
   @override
   State<ArgumentView> createState() => _ArgumentViewState();
 }

@@ -8,14 +8,9 @@ import 'package:provider/provider.dart';
 import 'envelope_view_model.dart';
 
 class EnvelopeView extends StatefulWidget {
-  const EnvelopeView({super.key});
+  const EnvelopeView(this.path, {super.key});
 
-  static Widget create(String filePath) {
-    return ChangeNotifierProvider(
-      create: (_) => EnvelopeViewModel(filePath),
-      child: EnvelopeView(),
-    );
-  }
+  final String path;
 
   @override
   State<EnvelopeView> createState() => _EnvelopeViewState();
@@ -28,7 +23,9 @@ class _EnvelopeViewState extends State<EnvelopeView> {
   void initState() {
     super.initState();
     final model = context.read<EnvelopeViewModel>();
-    model.init().then((_) => _controller.text = model.envelope.toString());
+    model
+        .load(widget.path)
+        .then((_) => _controller.text = model.envelope.toString());
   }
 
   @override

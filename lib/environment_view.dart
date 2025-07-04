@@ -6,13 +6,6 @@ import 'environment_view_model.dart';
 class EnvironmentView extends StatefulWidget {
   const EnvironmentView({super.key});
 
-  static Widget create() {
-    return ChangeNotifierProvider(
-      create: (_) => EnvironmentViewModel(),
-      child: const EnvironmentView(),
-    );
-  }
-
   @override
   State<EnvironmentView> createState() => _EnvironmentViewState();
 }
