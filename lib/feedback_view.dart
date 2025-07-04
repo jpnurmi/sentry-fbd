@@ -60,7 +60,7 @@ class _FeedbackViewState extends State<FeedbackView> {
             decoration: InputDecoration(label: Text('Feedback')),
             onChanged: viewModel.setFeedback,
             maxLines: 5,
-            autovalidateMode: AutovalidateMode.always,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: (value) =>
                 value?.trim().isNotEmpty == true ? null : 'Required',
           ),
