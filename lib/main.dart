@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'argument_view.dart';
 import 'environment_view.dart';
 import 'feedback_view.dart';
-import 'file_view.dart';
+import 'envelope_view.dart';
 import 'routes.dart';
 
 void main(List<String> args) {
@@ -14,7 +14,8 @@ void main(List<String> args) {
       darkTheme: ThemeData.dark(),
       home: HomePage(args: args),
       routes: {
-        Routes.file: (context) => FileView.create(Arguments.of(context).single),
+        Routes.envelope: (context) =>
+            EnvelopeView.create(Arguments.of(context).single),
         Routes.feedback: (context) => FeedbackView.create(),
       },
     ),

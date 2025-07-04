@@ -2,37 +2,33 @@ import 'package:code_text_field/code_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_highlight/themes/atom-one-dark.dart';
 import 'package:flutter_highlight/themes/atom-one-light.dart';
+import 'package:highlight/languages/json.dart' as highlight;
 import 'package:provider/provider.dart';
 
-import 'file_view_model.dart';
+import 'envelope_view_model.dart';
 
-class FileView extends StatefulWidget {
-  const FileView({super.key});
+class EnvelopeView extends StatefulWidget {
+  const EnvelopeView({super.key});
 
   static Widget create(String filePath) {
     return ChangeNotifierProvider(
-      create: (_) => FileViewModel(filePath),
-      child: FileView(),
+      create: (_) => EnvelopeViewModel(filePath),
+      child: EnvelopeView(),
     );
   }
 
   @override
-  State<FileView> createState() => _FileViewState();
+  State<EnvelopeView> createState() => _EnvelopeViewState();
 }
 
-class _FileViewState extends State<FileView> {
-  final _controller = CodeController();
+class _EnvelopeViewState extends State<EnvelopeView> {
+  final _controller = CodeController(language: highlight.json);
 
   @override
   void initState() {
     super.initState();
-    final model = context.read<FileViewModel>();
-    model.init().then(
-      (_) {
-        _controller.text = model.content;
-        _controller.language = model.language;
-      },
-    );
+    final model = context.read<EnvelopeViewModel>();
+    model.init().then((_) => _controller.text = model.envelope.toString());
   }
 
   @override
@@ -43,7 +39,7 @@ class _FileViewState extends State<FileView> {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<FileViewModel>();
+    final viewModel = context.watch<EnvelopeViewModel>();
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,

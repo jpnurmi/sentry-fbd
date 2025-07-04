@@ -65,7 +65,7 @@ class _ArgumentViewState extends State<ArgumentView> {
                   onDeleted: arg.isFile
                       ? () => Navigator.pushNamed(
                           context,
-                          Routes.file,
+                          Routes.envelope,
                           arguments: [arg.value],
                         )
                       : null,
