@@ -28,21 +28,13 @@ class Envelope {
   String toString() {
     final sw = Stopwatch()..start();
     final buffer = StringBuffer();
-    buffer.write(json.encode(header));
+    buffer.write(_formatHeader(header));
     for (final item in items) {
       buffer.writeln();
       final header = Map.of(item);
       final payload = header.remove('payload');
-      buffer.writeln(json.encode(header));
-      if (payload is Uint8List) {
-        buffer.writeln('[${payload.length} bytes]');
-      } else {
-        try {
-          buffer.writeln(json.encode(payload));
-        } catch (e) {
-          buffer.writeln(payload.toString());
-        }
-      }
+      buffer.writeln(_formatHeader(header));
+      buffer.writeln(_formatPayload(payload));
     }
     debugPrint('Formatted $filePath [${sw.elapsedMilliseconds} ms]');
     return buffer.toString();
@@ -113,6 +105,22 @@ class Envelope {
       } catch (e) {
         return bytes;
       }
+    }
+  }
+
+  static String _formatHeader(Map<String, dynamic> header) {
+    return json.encode(header);
+  }
+
+  static String _formatPayload(dynamic payload) {
+    if (payload is Uint8List) {
+      final hex = payload.map((b) => b.toRadixString(16).padLeft(2, '0'));
+      return '[${hex.join(',').toUpperCase()}]';
+    }
+    try {
+      return json.encode(payload);
+    } catch (e) {
+      return payload.toString();
     }
   }
 }
