@@ -34,6 +34,14 @@ class FeedbackViewModel with ChangeNotifier {
     }
   }
 
+  @override
+  void dispose() {
+    _name.dispose();
+    _email.dispose();
+    _feedback.dispose();
+    super.dispose();
+  }
+
   Future<void> submit() {
     return Sentry.captureFeedback(
       SentryFeedback(
