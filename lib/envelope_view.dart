@@ -1,10 +1,13 @@
 import 'package:code_text_field/code_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_highlight/themes/atom-one-dark.dart';
 import 'package:flutter_highlight/themes/atom-one-light.dart';
 import 'package:highlight/languages/json.dart' as highlight;
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import 'envelope.dart';
 import 'envelope_view_model.dart';
 
 class EnvelopeView extends StatefulWidget {
@@ -15,29 +18,26 @@ class EnvelopeView extends StatefulWidget {
 }
 
 class _EnvelopeViewState extends State<EnvelopeView> {
-  final _controller = CodeController(language: highlight.json);
-
-  @override
-  void initState() {
-    super.initState();
+  Future<void> _copyFilePath() async {
+    final messenger = ScaffoldMessenger.of(context);
     final vm = context.read<EnvelopeViewModel>();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      vm.init().then((content) {
-        _controller.text = content.toString();
-      });
-    });
+    await Clipboard.setData(ClipboardData(text: vm.filePath));
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text('Copied "${vm.filePath}"'),
+        duration: Duration(seconds: 2),
+      ),
+    );
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  Future<bool> _launchFilePath() async {
+    final vm = context.read<EnvelopeViewModel>();
+    return launchUrl(Uri.file(vm.filePath));
   }
 
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<EnvelopeViewModel>();
-    final styles = CodeStyles.of(context);
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -52,17 +52,108 @@ class _EnvelopeViewState extends State<EnvelopeView> {
             ),
           ],
         ),
-      ),
-      backgroundColor: styles['root']?.backgroundColor,
-      body: SingleChildScrollView(
-        child: CodeTheme(
-          data: CodeThemeData(styles: styles),
-          child: CodeField(
-            controller: _controller,
-            readOnly: true,
-            wrap: true,
+        actionsPadding: const EdgeInsets.symmetric(horizontal: 16),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.copy),
+            onPressed: vm.filePath.isNotEmpty ? _copyFilePath : null,
           ),
-        ),
+        ],
+      ),
+      body: EnvelopeListView(envelope: vm.envelope),
+      floatingActionButton: FloatingActionButton(
+        onPressed: vm.filePath.isNotEmpty ? _launchFilePath : null,
+        child: const Icon(Icons.open_in_new),
+      ),
+    );
+  }
+}
+
+class EnvelopeListView extends StatefulWidget {
+  const EnvelopeListView({super.key, required this.envelope});
+
+  final Envelope? envelope;
+
+  @override
+  State<EnvelopeListView> createState() => _EnvelopeListViewState();
+}
+
+class _EnvelopeListViewState extends State<EnvelopeListView> {
+  late final _expanded = List.generate(
+    widget.envelope?.items.length ?? 0,
+    (index) => false,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final styles = CodeStyles.of(context);
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          EnvelopeCodeView(code: widget.envelope!.formatHeader()),
+          Divider(thickness: 1, height: 1),
+          ExpansionPanelList(
+            expandedHeaderPadding: EdgeInsets.zero,
+            expansionCallback: (index, isExpanded) {
+              setState(() => _expanded[index] = isExpanded);
+            },
+            children: [
+              for (var i = 0; i < (widget.envelope?.items.length ?? 0); ++i)
+                ExpansionPanel(
+                  isExpanded: _expanded[i],
+                  backgroundColor: styles['root']?.backgroundColor,
+                  headerBuilder: (context, isExpanded) {
+                    return EnvelopeCodeView(
+                      code: widget.envelope!.formatItem(i),
+                    );
+                  },
+                  body: _expanded[i]
+                      ? EnvelopeCodeView(
+                          code: widget.envelope!.formatPayload(i),
+                        )
+                      : SizedBox.shrink(),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class EnvelopeCodeView extends StatefulWidget {
+  const EnvelopeCodeView({
+    super.key,
+    required this.code,
+  });
+
+  final String code;
+
+  @override
+  State<EnvelopeCodeView> createState() => _EnvelopeCodeViewState();
+}
+
+class _EnvelopeCodeViewState extends State<EnvelopeCodeView> {
+  late final _controller = CodeController(
+    language: highlight.json,
+    text: widget.code,
+  );
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CodeTheme(
+      data: CodeThemeData(styles: CodeStyles.of(context)),
+      child: CodeField(
+        controller: _controller,
+        lineNumbers: false,
+        readOnly: true,
+        wrap: true,
       ),
     );
   }

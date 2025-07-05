@@ -12,41 +12,53 @@ class Envelope {
     required this.filePath,
     required this.header,
     required this.items,
+    required this.payloads,
   });
 
   final String filePath;
   final Map<String, dynamic> header;
   final List<Map<String, dynamic>> items;
+  final List<dynamic> payloads;
 
-  Map<String, dynamic>? getEvent() {
-    return items.firstWhereOrNull(
-      (item) => item['type'] == 'event',
-    )?['payload'];
+  static String prettyFormat(Map<String, dynamic>? header) {
+    return JsonEncoder.withIndent('  ').convert(header);
   }
 
-  @override
-  String toString() {
-    final sw = Stopwatch()..start();
-    final buffer = StringBuffer();
-    buffer.write(_formatHeader(header));
-    for (final item in items) {
-      buffer.writeln();
-      final header = Map.of(item);
-      final payload = header.remove('payload');
-      buffer.writeln(_formatHeader(header));
-      buffer.writeln(_formatPayload(payload));
-    }
-    debugPrint('Formatted $filePath [${sw.elapsedMilliseconds} ms]');
-    return buffer.toString();
+  String formatHeader() {
+    return prettyFormat(header);
+  }
+
+  String formatItem(int index) {
+    return prettyFormat(items.elementAtOrNull(index));
+  }
+
+  String formatPayload(int index) {
+    final payload = payloads.elementAtOrNull(index);
+    if (payload == null) return '';
+    return switch (payload) {
+      Uint8List() =>
+        '[${payload.map((b) => b.toRadixString(16).padLeft(2, '0')).join(',').toUpperCase()}]',
+      _ => JsonEncoder.withIndent('  ').convert(payload),
+    };
+  }
+
+  Map<String, dynamic>? getEvent() {
+    return payloads.elementAtOrNull(
+      items.indexWhere((item) => item['type'] == 'event'),
+    );
   }
 
   factory Envelope.fromFile(String? filePath) {
-    if (filePath == null) return Envelope(filePath: '', header: {}, items: []);
+    if (filePath == null) {
+      return Envelope(filePath: '', header: {}, items: [], payloads: []);
+    }
+
     final sw = Stopwatch()..start();
     final data = Uint8List.fromList(File(filePath).readAsBytesSync());
 
     int position = 0;
     final items = <Map<String, dynamic>>[];
+    final payloads = <dynamic>[];
 
     var line = _readLine(data, position);
     position += line.length + 1; // \n
@@ -68,11 +80,17 @@ class Envelope {
         position++;
       }
 
-      items.add({...item, 'payload': ?_decodePayload(payload)});
+      items.add(item);
+      payloads.add(_decodePayload(payload));
     }
 
     debugPrint('Loaded $filePath [${sw.elapsedMilliseconds} ms]');
-    return Envelope(filePath: filePath, header: header, items: items);
+    return Envelope(
+      filePath: filePath,
+      header: header,
+      items: items,
+      payloads: payloads,
+    );
   }
 
   static Uint8List _readLine(Uint8List data, int start) {
@@ -105,22 +123,6 @@ class Envelope {
       } catch (e) {
         return bytes;
       }
-    }
-  }
-
-  static String _formatHeader(Map<String, dynamic> header) {
-    return json.encode(header);
-  }
-
-  static String _formatPayload(dynamic payload) {
-    if (payload is Uint8List) {
-      final hex = payload.map((b) => b.toRadixString(16).padLeft(2, '0'));
-      return '[${hex.join(',').toUpperCase()}]';
-    }
-    try {
-      return json.encode(payload);
-    } catch (e) {
-      return payload.toString();
     }
   }
 }

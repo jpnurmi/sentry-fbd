@@ -4,12 +4,11 @@ import 'package:path/path.dart' as path;
 import 'envelope.dart';
 
 class EnvelopeViewModel with ChangeNotifier {
-  EnvelopeViewModel(this._envelope);
+  EnvelopeViewModel(this.envelope);
 
-  final Envelope? _envelope;
+  final Envelope? envelope;
 
-  String get basename => path.basename(_envelope?.filePath ?? '');
-  String get dirname => path.dirname(_envelope?.filePath ?? '');
-
-  Future<String?> init() async => _envelope?.toString();
+  String get basename => path.basename(envelope?.filePath ?? '');
+  String get dirname => path.dirname(envelope?.filePath ?? '');
+  String get filePath => envelope?.filePath ?? '';
 }
