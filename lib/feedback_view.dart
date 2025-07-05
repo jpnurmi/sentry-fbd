@@ -30,11 +30,6 @@ class _FeedbackViewState extends State<FeedbackView> {
         title: Text('Sentry FBD'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.list),
-            tooltip: 'Environment',
-            onPressed: () => Navigator.pushNamed(context, Routes.environment),
-          ),
-          IconButton(
             icon: const Icon(Icons.mail),
             tooltip: 'Envelope',
             onPressed: () => Navigator.pushNamed(context, Routes.envelope),
