@@ -20,28 +20,28 @@ class Envelope {
   final List<Map<String, dynamic>> items;
   final List<dynamic> payloads;
 
-  static String prettyFormat(Map<String, dynamic>? header) {
-    return JsonEncoder.withIndent('  ').convert(header);
+  static String _prettyFormat(Map<String, dynamic>? json) {
+    return JsonEncoder.withIndent('  ').convert(json);
   }
 
   String formatHeader() {
-    return prettyFormat(header);
+    return _prettyFormat(header);
   }
 
   String formatItem(int index) {
-    return prettyFormat(items.elementAtOrNull(index));
+    return _prettyFormat(items.elementAtOrNull(index));
   }
 
   String formatPayload(int index) {
     final payload = payloads.elementAtOrNull(index);
-    if (payload == null) return '';
     return switch (payload) {
       Uint8List() =>
         payload
             .map((b) => b.toRadixString(16).padLeft(2, '0'))
             .join(' ')
             .toUpperCase(),
-      _ => JsonEncoder.withIndent('  ').convert(payload),
+      Map<String, dynamic>() => _prettyFormat(payload),
+      _ => payload.toString(),
     };
   }
 
