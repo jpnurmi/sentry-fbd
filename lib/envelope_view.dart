@@ -20,9 +20,9 @@ class _EnvelopeViewState extends State<EnvelopeView> {
   @override
   void initState() {
     super.initState();
-    final viewModel = context.read<EnvelopeViewModel>();
+    final vm = context.read<EnvelopeViewModel>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      viewModel.init().then((content) {
+      vm.init().then((content) {
         _controller.text = content.toString();
       });
     });
@@ -36,7 +36,7 @@ class _EnvelopeViewState extends State<EnvelopeView> {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<EnvelopeViewModel>();
+    final vm = context.watch<EnvelopeViewModel>();
     final styles = CodeStyles.of(context);
     return Scaffold(
       appBar: AppBar(
@@ -44,9 +44,9 @@ class _EnvelopeViewState extends State<EnvelopeView> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(viewModel.basename, overflow: TextOverflow.ellipsis),
+            Text(vm.basename, overflow: TextOverflow.ellipsis),
             Text(
-              viewModel.dirname,
+              vm.dirname,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.bodySmall,
             ),

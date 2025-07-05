@@ -27,13 +27,13 @@ class _EnvironmentViewState extends State<EnvironmentView> {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<EnvironmentViewModel>();
+    final vm = context.watch<EnvironmentViewModel>();
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
         title: TextField(
           controller: _controller,
-          onChanged: viewModel.filter,
+          onChanged: vm.filter,
           decoration: InputDecoration(
             labelText: 'Environment',
             suffixIcon: _controller.text.isEmpty
@@ -42,7 +42,7 @@ class _EnvironmentViewState extends State<EnvironmentView> {
                     icon: Icon(Icons.clear),
                     onPressed: () {
                       _controller.clear();
-                      viewModel.filter('');
+                      vm.filter('');
                     },
                   ),
             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -50,15 +50,15 @@ class _EnvironmentViewState extends State<EnvironmentView> {
         ),
       ),
       body: ListView.separated(
-        itemCount: viewModel.length,
+        itemCount: vm.length,
         itemBuilder: (context, index) {
           return ListTile(
             dense: true,
             title: SelectableText(
-              viewModel.key(index),
+              vm.key(index),
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            subtitle: SelectableText(viewModel.value(index) ?? ''),
+            subtitle: SelectableText(vm.value(index) ?? ''),
           );
         },
         separatorBuilder: (_, _) => const Divider(height: 1, thickness: 1),

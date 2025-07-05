@@ -15,15 +15,15 @@ class _FeedbackViewState extends State<FeedbackView> {
   @override
   void initState() {
     super.initState();
-    final viewModel = context.read<FeedbackViewModel>();
+    final vm = context.read<FeedbackViewModel>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      viewModel.init();
+      vm.init();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<FeedbackViewModel>();
+    final vm = context.watch<FeedbackViewModel>();
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -46,15 +46,15 @@ class _FeedbackViewState extends State<FeedbackView> {
         padding: const EdgeInsets.all(16),
         children: [
           TextFormField(
-            controller: viewModel.name,
+            controller: vm.name,
             decoration: InputDecoration(label: Text('Name')),
           ),
           TextFormField(
-            controller: viewModel.email,
+            controller: vm.email,
             decoration: InputDecoration(label: Text('Email')),
           ),
           TextFormField(
-            controller: viewModel.feedback,
+            controller: vm.feedback,
             decoration: InputDecoration(label: Text('Feedback')),
             maxLines: 5,
             autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -64,7 +64,7 @@ class _FeedbackViewState extends State<FeedbackView> {
         ].separated(const SizedBox(height: 16)),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: viewModel.isValid ? viewModel.submit : null,
+        onPressed: vm.isValid ? vm.submit : null,
         child: const Icon(Icons.send),
       ),
     );
