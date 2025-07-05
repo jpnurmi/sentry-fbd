@@ -8,7 +8,7 @@ class EnvelopeViewModel with ChangeNotifier {
 
   final Envelope? envelope;
 
-  String get basename => path.basename(envelope?.filePath ?? '');
-  String get dirname => path.dirname(envelope?.filePath ?? '');
   String get filePath => envelope?.filePath ?? '';
+  String get dirname => path.dirname(filePath);
+  String get basename => path.basename(filePath);
 }
