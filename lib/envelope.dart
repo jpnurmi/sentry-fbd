@@ -97,16 +97,16 @@ class Envelope {
   }
 
   static Uint8List _readLine(Uint8List data, int start) {
-    for (int i = start; i < data.length; i++) {
+    for (int i = start; i < data.length; ++i) {
       if (data[i] == kNewline) {
-        return data.sublist(start, i);
+        return Uint8List.sublistView(data, start, i);
       }
     }
-    return data.sublist(start);
+    return Uint8List.sublistView(data, start);
   }
 
   static int _findNext(Uint8List data, int start) {
-    for (int i = start; i < data.length - 1; i++) {
+    for (int i = start; i < data.length - 1; ++i) {
       if (data[i] == kNewline && data[i + 1] == kOpenBrace) {
         return i;
       }
@@ -119,13 +119,14 @@ class Envelope {
       return null;
     }
     try {
-      return json.decode(utf8.decode(bytes));
-    } catch (e) {
+      final decoded = utf8.decode(bytes);
       try {
-        return utf8.decode(bytes);
+        return json.decode(decoded);
       } catch (e) {
-        return bytes;
+        return decoded;
       }
+    } catch (e) {
+      return bytes;
     }
   }
 }
