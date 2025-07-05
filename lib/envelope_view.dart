@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_highlight/themes/atom-one-dark.dart';
 import 'package:flutter_highlight/themes/atom-one-light.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:highlight/languages/json.dart' as highlight;
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -135,7 +136,7 @@ class EnvelopeCodeView extends StatefulWidget {
 
 class _EnvelopeCodeViewState extends State<EnvelopeCodeView> {
   late final _controller = CodeController(
-    language: highlight.json,
+    language: widget.code.startsWith('{') ? highlight.json : null,
     text: widget.code,
   );
 
@@ -153,6 +154,7 @@ class _EnvelopeCodeViewState extends State<EnvelopeCodeView> {
         controller: _controller,
         lineNumbers: false,
         readOnly: true,
+        textStyle: GoogleFonts.sourceCodePro(),
         wrap: true,
       ),
     );

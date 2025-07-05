@@ -37,15 +37,18 @@ class Envelope {
     if (payload == null) return '';
     return switch (payload) {
       Uint8List() =>
-        '[${payload.map((b) => b.toRadixString(16).padLeft(2, '0')).join(',').toUpperCase()}]',
+        payload
+            .map((b) => b.toRadixString(16).padLeft(2, '0'))
+            .join(' ')
+            .toUpperCase(),
       _ => JsonEncoder.withIndent('  ').convert(payload),
     };
   }
 
   Map<String, dynamic>? getEvent() {
-    return payloads.elementAtOrNull(
-      items.indexWhere((item) => item['type'] == 'event'),
-    );
+    final index = items.indexWhere((item) => item['type'] == 'event');
+    if (index == -1) return null;
+    return payloads.elementAtOrNull(index);
   }
 
   factory Envelope.fromFile(String? filePath) {
