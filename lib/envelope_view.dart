@@ -8,9 +8,7 @@ import 'package:provider/provider.dart';
 import 'envelope_view_model.dart';
 
 class EnvelopeView extends StatefulWidget {
-  const EnvelopeView(this.path, {super.key});
-
-  final String? path;
+  const EnvelopeView({super.key});
 
   @override
   State<EnvelopeView> createState() => _EnvelopeViewState();
@@ -22,10 +20,12 @@ class _EnvelopeViewState extends State<EnvelopeView> {
   @override
   void initState() {
     super.initState();
-    final model = context.read<EnvelopeViewModel>();
-    model
-        .load(widget.path)
-        .then((_) => _controller.text = model.envelope.toString());
+    final viewModel = context.read<EnvelopeViewModel>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      viewModel.init().then((content) {
+        _controller.text = content.toString();
+      });
+    });
   }
 
   @override

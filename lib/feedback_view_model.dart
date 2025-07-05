@@ -1,17 +1,22 @@
 import 'package:flutter/widgets.dart';
 import 'package:sentry/sentry.dart';
 
-import 'envelope_model.dart';
+import 'envelope.dart';
 
 class FeedbackViewModel with ChangeNotifier {
-  Envelope? _envelope;
+  FeedbackViewModel(this._envelope) {
+    final event = _envelope?.getEvent();
+    _name.text = event?['user']?['username'] ?? '';
+    _email.text = event?['user']?['email'] ?? '';
+  }
+
+  final Envelope? _envelope;
   String? get dsn => _envelope?.header['dsn'];
   String? get eventId => _envelope?.header['event_id'];
 
   final _name = TextEditingController();
   final _email = TextEditingController();
   final _feedback = TextEditingController();
-
   TextEditingController get name => _name;
   TextEditingController get email => _email;
   TextEditingController get feedback => _feedback;
@@ -19,13 +24,7 @@ class FeedbackViewModel with ChangeNotifier {
   bool get isValid =>
       dsn != null && eventId != null && _feedback.text.trim().isNotEmpty;
 
-  Future<void> init(Envelope? envelope) async {
-    final event = envelope?.getEvent();
-    _name.text = event?['user']?['username'] ?? '';
-    _email.text = event?['user']?['email'] ?? '';
-    _envelope = envelope;
-    notifyListeners();
-
+  Future<void> init() async {
     if (dsn != null) {
       await Sentry.init((options) {
         options.dsn = dsn;

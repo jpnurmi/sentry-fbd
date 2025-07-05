@@ -1,14 +1,20 @@
 import 'dart:convert';
-import 'dart:typed_data';
+import 'dart:io';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 
 const kNewline = 10; // '\n'
 const kOpenBrace = 123; // '{'
 
 class Envelope {
-  const Envelope({required this.header, required this.items});
+  const Envelope({
+    required this.filePath,
+    required this.header,
+    required this.items,
+  });
 
+  final String filePath;
   final Map<String, dynamic> header;
   final List<Map<String, dynamic>> items;
 
@@ -20,6 +26,7 @@ class Envelope {
 
   @override
   String toString() {
+    final sw = Stopwatch()..start();
     final buffer = StringBuffer();
     buffer.write(json.encode(header));
     for (final item in items) {
@@ -37,10 +44,15 @@ class Envelope {
         }
       }
     }
+    debugPrint('Formatted $filePath [${sw.elapsedMilliseconds} ms]');
     return buffer.toString();
   }
 
-  factory Envelope.parse(Uint8List data) {
+  factory Envelope.fromFile(String? filePath) {
+    if (filePath == null) return Envelope(filePath: '', header: {}, items: []);
+    final sw = Stopwatch()..start();
+    final data = Uint8List.fromList(File(filePath).readAsBytesSync());
+
     int position = 0;
     final items = <Map<String, dynamic>>[];
 
@@ -67,7 +79,8 @@ class Envelope {
       items.add({...item, 'payload': ?_decodePayload(payload)});
     }
 
-    return Envelope(header: header, items: items);
+    debugPrint('Loaded $filePath [${sw.elapsedMilliseconds} ms]');
+    return Envelope(filePath: filePath, header: header, items: items);
   }
 
   static Uint8List _readLine(Uint8List data, int start) {
