@@ -56,14 +56,16 @@ class _EnvelopeViewState extends State<EnvelopeView> {
         actionsPadding: const EdgeInsets.symmetric(horizontal: 16),
         actions: [
           IconButton(
-            icon: Icon(Icons.copy),
+            tooltip: 'Copy',
             onPressed: vm.filePath.isNotEmpty ? _copyFilePath : null,
+            icon: Icon(Icons.copy),
           ),
         ],
       ),
       body: EnvelopeListView(envelope: vm.envelope),
       floatingActionButton: FloatingActionButton(
         onPressed: vm.filePath.isNotEmpty ? _launchFilePath : null,
+        tooltip: 'Open',
         child: const Icon(Icons.open_in_new),
       ),
     );

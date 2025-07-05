@@ -57,16 +57,19 @@ class _FeedbackViewState extends State<FeedbackView> {
             controller: vm.feedback,
             decoration: InputDecoration(label: Text('Feedback')),
             maxLines: 5,
-            autovalidateMode: AutovalidateMode.onUserInteraction,
+            autovalidateMode: AutovalidateMode.always,
             validator: (value) =>
                 value?.trim().isNotEmpty == true ? null : 'Required',
           ),
         ].separated(const SizedBox(height: 16)),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: vm.isValid ? vm.submit : null,
-        child: const Icon(Icons.send),
-      ),
+      floatingActionButton: vm.isAvailable
+          ? FloatingActionButton(
+              onPressed: vm.isValid ? vm.submit : null,
+              tooltip: vm.isValid ? 'Submit' : null,
+              child: const Icon(Icons.send),
+            )
+          : null,
     );
   }
 }

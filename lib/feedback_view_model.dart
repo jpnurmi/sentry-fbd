@@ -21,10 +21,16 @@ class FeedbackViewModel with ChangeNotifier {
   TextEditingController get email => _email;
   TextEditingController get feedback => _feedback;
 
-  bool get isValid =>
-      dsn != null && eventId != null && _feedback.text.trim().isNotEmpty;
+  bool get hasDsn => dsn != null && dsn!.isNotEmpty;
+  bool get hasEventId => eventId != null && eventId!.isNotEmpty;
+  bool get isAvailable => hasDsn && hasEventId;
+  bool get isValid => isAvailable && _feedback.text.trim().isNotEmpty;
 
   Future<void> init() async {
+    _name.addListener(notifyListeners);
+    _email.addListener(notifyListeners);
+    _feedback.addListener(notifyListeners);
+
     if (dsn != null) {
       await Sentry.init((options) {
         options.dsn = dsn;
