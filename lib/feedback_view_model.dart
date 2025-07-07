@@ -11,6 +11,7 @@ class FeedbackViewModel with ChangeNotifier {
   }
 
   final Envelope? _envelope;
+  Envelope? get envelope => _envelope;
   String? get dsn => _envelope?.header['dsn'];
   String? get eventId => _envelope?.header['event_id'];
 

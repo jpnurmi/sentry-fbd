@@ -29,11 +29,12 @@ class _FeedbackViewState extends State<FeedbackView> {
         centerTitle: false,
         title: Text('Sentry FBD'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.mail),
-            tooltip: 'Envelope',
-            onPressed: () => Navigator.pushNamed(context, Routes.envelope),
-          ),
+          if (vm.envelope != null)
+            IconButton(
+              icon: const Icon(Icons.mail),
+              tooltip: 'Envelope',
+              onPressed: () => Navigator.pushNamed(context, Routes.envelope),
+            ),
         ],
         actionsPadding: const EdgeInsets.symmetric(horizontal: 16),
       ),

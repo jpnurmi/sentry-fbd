@@ -51,9 +51,9 @@ class Envelope {
     return payloads.elementAtOrNull(index);
   }
 
-  factory Envelope.fromFile(String? filePath) {
+  static Envelope? fromFile(String? filePath) {
     if (filePath == null) {
-      return Envelope(filePath: '', header: {}, items: [], payloads: []);
+      return null;
     }
 
     final sw = Stopwatch()..start();
